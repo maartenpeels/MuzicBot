@@ -5,9 +5,14 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"log"
 	"muzicBot/bot/cmd"
+	"muzicBot/bot/core"
 	"os"
 	"os/signal"
 )
+
+// TODO: handle disconnect / kick from voice channel
+
+var Sessions *core.SessionManager
 
 func Init() {
 	discord, err := discordgo.New("Bot " + Env.Token)
@@ -21,7 +26,8 @@ func Init() {
 	}
 	defer discord.Close()
 
-	discord.AddHandler(onLoggedIn)
+	Sessions = core.NewSessionManager()
+
 	discord.AddHandler(InteractionCreate)
 
 	log.Printf("Adding commands")
@@ -47,18 +53,14 @@ func Init() {
 
 	log.Printf("Shutting down")
 
-	// TODO: Make removing commands a setting
-	log.Printf("Removing commands")
-	for _, v := range registeredCommands {
-		err := discord.ApplicationCommandDelete(discord.State.User.ID, "", v.ID)
-		if err != nil {
-			log.Printf("Error deleting command: %s", err)
-		}
-	}
-}
-
-func onLoggedIn(s *discordgo.Session, event *discordgo.Ready) {
-	log.Printf("Logged in as %s", event.User.String())
+	// TODO: This breaks the discord client (until restart)
+	//log.Printf("Removing commands")
+	//for _, v := range registeredCommands {
+	//	err := discord.ApplicationCommandDelete(discord.State.User.ID, "", v.ID)
+	//	if err != nil {
+	//		log.Printf("Error deleting command: %s", err)
+	//	}
+	//}
 }
 
 func InteractionCreate(s *discordgo.Session, i *discordgo.InteractionCreate) {
@@ -68,5 +70,18 @@ func InteractionCreate(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
-	handler(s, i)
+	channel, err := s.State.Channel(i.ChannelID)
+	if err != nil {
+		fmt.Println("Error getting channel,", err)
+		return
+	}
+
+	guild, err := s.State.Guild(channel.GuildID)
+	if err != nil {
+		fmt.Println("Error getting guild,", err)
+		return
+	}
+
+	ctx := core.NewContext(s, i, guild, Sessions)
+	handler(ctx)
 }

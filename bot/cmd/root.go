@@ -1,6 +1,9 @@
 package cmd
 
-import "github.com/bwmarrin/discordgo"
+import (
+	"github.com/bwmarrin/discordgo"
+	"muzicBot/bot/core"
+)
 
 var Commands = []*discordgo.ApplicationCommand{
 	{
@@ -19,9 +22,14 @@ var Commands = []*discordgo.ApplicationCommand{
 			},
 		},
 	},
+	{
+		Name:        "stop",
+		Description: "Stop the music",
+	},
 }
 
-var CommandHandlers = map[string]func(s *discordgo.Session, m *discordgo.InteractionCreate){
+var CommandHandlers = map[string]func(ctx *core.Context){
 	"ping": PingCommandHandler,
 	"play": PlayCommandHandler,
+	"stop": StopCommandHandler,
 }

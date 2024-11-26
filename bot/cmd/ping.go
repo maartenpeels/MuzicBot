@@ -1,19 +1,9 @@
 package cmd
 
 import (
-	"github.com/bwmarrin/discordgo"
-	"log"
+	"muzicBot/bot/core"
 )
 
-func PingCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: "Pong!",
-		},
-	})
-
-	if err != nil {
-		log.Printf("Error sending interaction response: %s", err)
-	}
+func PingCommandHandler(ctx *core.Context) {
+	ctx.Respond("Pong!")
 }

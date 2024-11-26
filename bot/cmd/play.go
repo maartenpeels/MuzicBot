@@ -1,30 +1,35 @@
 package cmd
 
 import (
-	"github.com/bwmarrin/discordgo"
-	"log"
-	"muzicBot/bot/music"
-	"muzicBot/bot/queue"
+	"muzicBot/bot/core"
 )
 
-func PlayCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	log.Printf("Play command received")
+func PlayCommandHandler(ctx *core.Context) {
+	ctx.Respond("Loading...")
 
-	go music.Add(queue.Item{
-		RequestedBy: i.Member.User.Username,
-		Session:     s,
-		Interaction: i.Interaction,
-		URL:         i.ApplicationCommandData().Options[0].StringValue(),
-	})
+	sess := ctx.Sessions.GetByGuild(ctx.Guild.ID)
 
-	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: "Working...",
-		},
-	})
-
-	if err != nil {
-		log.Printf("Error sending interaction response: %s", err)
+	if sess == nil {
+		vc := ctx.GetVoiceChannel()
+		if vc == nil {
+			ctx.UpdateResponse("You must be in a voice channel to use the bot!")
+			return
+		}
+		newSess, err := ctx.Sessions.Join(ctx.Discord, ctx.Guild.ID, vc.ID, core.JoinProperties{
+			Muted:    false,
+			Deafened: false,
+		})
+		sess = newSess
+		if err != nil {
+			ctx.UpdateResponse("Failed to join voice channel")
+			return
+		}
 	}
+
+	url := ctx.Interaction.ApplicationCommandData().Options[0].StringValue()
+	sess.Queue.Add(core.Song(url))
+
+	go sess.Queue.Start(sess, func(msg string) {
+		ctx.UpdateResponse(msg)
+	})
 }
