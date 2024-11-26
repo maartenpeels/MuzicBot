@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"log"
 	"muzicBot/bot/cmd"
@@ -34,6 +35,10 @@ func Init() {
 
 		registeredCommands[i] = cmd
 	}
+
+	permissions := discordgo.PermissionVoiceUseVAD | discordgo.PermissionVoiceConnect | discordgo.PermissionReadMessages | discordgo.PermissionVoiceSpeak | discordgo.PermissionSendMessages | discordgo.PermissionManageMessages
+	invite := fmt.Sprintf("https://discord.com/oauth2/authorize?client_id=%s&scope=bot&permissions=%d", discord.State.User.ID, permissions)
+	log.Printf("Invite URL: %s", invite)
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
