@@ -13,5 +13,5 @@ func SkipCommandHandler(ctx *core.Context) {
 		ctx.UpdateResponse("I'm not playing anything right now!")
 	}
 
-	sess.Skip();
+	sess.Skip()
 }
