@@ -25,7 +25,7 @@ var Commands = []*discordgo.ApplicationCommand{
 	{
 		Name:		 "skip",
 		Description: "Skip the current song"
-	}
+	},
 	{
 		Name:        "stop",
 		Description: "Stop the music",
