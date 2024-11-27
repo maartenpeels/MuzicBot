@@ -13,7 +13,6 @@ func StopCommandHandler(ctx *core.Context) {
 		return
 	}
 
-	sess.Queue.Clear()
-	sess.Stop()
+	ctx.Sessions.Leave(*sess)
 	ctx.UpdateResponse("Stopped playback.")
 }
