@@ -13,7 +13,7 @@ func (connection *Connection) Play(song Song) error {
 		return errors.New("song already playing")
 	}
 
-	ytCmd := exec.Command("./yt-dlp", "-f", "bestaudio", "-o", "-", string(song))
+	ytCmd := exec.Command("yt-dlp", "-f", "bestaudio", "-o", "-", string(song))
 	ffmpegCmd := exec.Command("ffmpeg", "-i", "pipe:0", "-f", "s16le", "-ar", "48000", "-ac", "2", "pipe:1")
 
 	// Pipe yt-dlp output to ffmpeg
