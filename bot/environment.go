@@ -14,7 +14,7 @@ var Env *env
 
 func LoadEnv() error {
 	// Attempt to load .env file but do not fail if it's missing so we can override with env variable
-	_ := godotenv.Load(".env")
+	_ = godotenv.Load(".env")
 
 	token := os.Getenv("TOKEN")
 	if token == "" {
