@@ -12,6 +12,7 @@ type Connection struct {
 	lock            sync.Mutex
 	sendPcm         bool
 	stopRunning     bool
+	shouldSkip		bool
 	playing         bool
 }
 

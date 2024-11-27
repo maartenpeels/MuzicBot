@@ -53,6 +53,10 @@ func (connection *Connection) Play(song Song) error {
 			connection.stopRunning = false
 			break
 		}
+		if connection.shouldSkip {
+			connection.shouldSkip = false
+			break
+		}
 		n, err := ffmpegPipe.Read(buffer)
 		if err != nil {
 			if err == io.EOF {
@@ -84,6 +88,11 @@ func (connection *Connection) Play(song Song) error {
 
 	return nil
 }
+
+func (connection *Connection) Skip() {
+	connection.shouldSkip = true
+}
+
 
 func (connection *Connection) Stop() {
 	connection.stopRunning = true
