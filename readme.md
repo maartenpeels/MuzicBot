@@ -39,6 +39,12 @@ TOKEN=your_discord_bot_token
 
 ## Usage
 
+### Docker
+
+1. docker run -e TOKEN=your_discord_bot_token maarten1012/muzicbot
+
+### Development
+
 1. Build the bot:
    ```sh
    go build -o muzicBot

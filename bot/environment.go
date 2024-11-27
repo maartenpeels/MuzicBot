@@ -13,10 +13,8 @@ type env struct {
 var Env *env
 
 func LoadEnv() error {
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
+	// Attempt to load .env file but do not fail if it's missing so we can override with env variable
+	_ := godotenv.Load(".env")
 
 	token := os.Getenv("TOKEN")
 	if token == "" {
