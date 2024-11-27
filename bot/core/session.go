@@ -34,8 +34,8 @@ func (sess *Session) Play(song Song) error {
 	return sess.connection.Play(song)
 }
 
-func (sess *Session) Skip() error {
-	return sess.connection.Skip()
+func (sess *Session) Skip() {
+	sess.connection.Skip()
 }
 
 func (sess *Session) Stop() {
