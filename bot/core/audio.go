@@ -48,12 +48,7 @@ func (connection *Connection) Play(url string) error {
 
 	buffer := make([]byte, 3840) // PCM buffer size for 48kHz stereo
 	for {
-		if connection.stopRunning {
-			connection.stopRunning = false
-			break
-		}
-		if connection.shouldSkip {
-			connection.shouldSkip = false
+		if connection.stopRunning || connection.shouldSkip {
 			break
 		}
 		n, err := ffmpegPipe.Read(buffer)
@@ -79,11 +74,15 @@ func (connection *Connection) Play(url string) error {
 		connection.voiceConnection.OpusSend <- opusData
 	}
 
-	// Wait for yt-dlp and ffmpeg to finish
-	ytCmd.Wait()
-	ffmpegCmd.Wait()
+	if !connection.stopRunning && !connection.shouldSkip {
+		// Wait for yt-dlp and ffmpeg to finish
+		ytCmd.Wait()
+		ffmpegCmd.Wait()
+	}
 
 	connection.playing = false
+	connection.stopRunning = false
+	connection.shouldSkip = false
 
 	return nil
 }
