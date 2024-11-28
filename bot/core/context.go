@@ -6,11 +6,10 @@ import (
 )
 
 type Context struct {
-	Discord      *discordgo.Session
-	Interaction  *discordgo.InteractionCreate
-	Guild        *discordgo.Guild
-	VoiceChannel *discordgo.Channel
-	Sessions     *SessionManager
+	Discord     *discordgo.Session
+	Interaction *discordgo.InteractionCreate
+	Guild       *discordgo.Guild
+	Sessions    *SessionManager
 }
 
 func NewContext(discord *discordgo.Session, integration *discordgo.InteractionCreate, guild *discordgo.Guild, sessions *SessionManager) *Context {
@@ -46,14 +45,9 @@ func (ctx *Context) UpdateResponse(response string) {
 }
 
 func (ctx *Context) GetVoiceChannel() *discordgo.Channel {
-	if ctx.VoiceChannel != nil {
-		return ctx.VoiceChannel
-	}
-
 	for _, state := range ctx.Guild.VoiceStates {
 		if state.UserID == ctx.Interaction.Member.User.ID {
 			channel, _ := ctx.Discord.State.Channel(state.ChannelID)
-			ctx.VoiceChannel = channel
 			return channel
 		}
 	}
