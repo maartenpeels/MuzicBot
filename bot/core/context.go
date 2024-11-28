@@ -21,6 +21,7 @@ func NewContext(discord *discordgo.Session, integration *discordgo.InteractionCr
 	}
 }
 
+// Respond sends a response to the interaction (use only once in the handler)
 func (ctx *Context) Respond(response string) {
 	err := ctx.Discord.InteractionRespond(ctx.Interaction.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
@@ -34,6 +35,7 @@ func (ctx *Context) Respond(response string) {
 	}
 }
 
+// UpdateResponse updates the response to the interaction (use multiple times after Respond)
 func (ctx *Context) UpdateResponse(response string) {
 	_, err := ctx.Discord.InteractionResponseEdit(ctx.Interaction.Interaction, &discordgo.WebhookEdit{
 		Content: &response,

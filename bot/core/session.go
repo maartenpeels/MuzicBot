@@ -27,6 +27,9 @@ func newSession(guildId, channelId string, connection *Connection) *Session {
 	session.guildId = guildId
 	session.ChannelId = channelId
 	session.connection = connection
+
+	go session.Queue.Start(session)
+
 	return session
 }
 

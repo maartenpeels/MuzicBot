@@ -27,11 +27,5 @@ func PlayCommandHandler(ctx *core.Context) {
 	}
 
 	url := ctx.Interaction.ApplicationCommandData().Options[0].StringValue()
-	sess.Queue.Add(url)
-
-	if !sess.Queue.Running {
-		go sess.Queue.Start(sess, func(msg string) {
-			ctx.UpdateResponse(msg)
-		})
-	}
+	sess.Queue.Add(core.Song{Url: url, Ctx: ctx})
 }

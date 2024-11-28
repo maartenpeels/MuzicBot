@@ -8,6 +8,12 @@ MuzicBot is a Discord bot that streams music from various sources directly into 
 - Basic commands: play, stop, ping
 - Handles voice channel connections
 
+## ToDos
+
+- [x] Skip is broken
+- [ ] `UpdateResponse` not always working
+- [ ] Refactor how we send messages (preferably without using `context`, e.g. "Finished queue")
+
 ## Requirements
 
 - Go 1.18+
