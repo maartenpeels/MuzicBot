@@ -1,12 +1,15 @@
 package core
 
 import (
+	"fmt"
+
 	"github.com/bwmarrin/discordgo"
 )
 
 type (
 	Session struct {
 		Queue              *SongQueue
+		discord            *discordgo.Session
 		guildId, ChannelId string
 		connection         *Connection
 	}
@@ -21,9 +24,10 @@ type (
 	}
 )
 
-func newSession(guildId, channelId string, connection *Connection) *Session {
+func newSession(manager *SessionManager, guildId string, channelId string, discord *discordgo.Session, connection *Connection) *Session {
 	session := new(Session)
-	session.Queue = NewSongQueue()
+	session.Queue = NewSongQueue(manager)
+	session.discord = discord
 	session.guildId = guildId
 	session.ChannelId = channelId
 	session.connection = connection
@@ -45,6 +49,14 @@ func (sess *Session) Stop() {
 	sess.connection.Stop()
 }
 
+func (sess *Session) SendMessage(content string) {
+	_, err := sess.discord.ChannelMessageSend(sess.ChannelId, content)
+	if err != nil {
+		fmt.Printf("Error sending message: %v\n", err)
+		return
+	}
+}
+
 func NewSessionManager() *SessionManager {
 	return &SessionManager{make(map[string]*Session)}
 }
@@ -64,13 +76,23 @@ func (manager *SessionManager) Join(discord *discordgo.Session, guildId, channel
 	if err != nil {
 		return nil, err
 	}
-	sess := newSession(guildId, channelId, NewConnection(vc))
+	sess := newSession(manager, guildId, channelId, discord, NewConnection(vc))
 	manager.sessions[channelId] = sess
 	return sess, nil
 }
 
 func (manager *SessionManager) Leave(session Session) {
+	session.Queue.Stop()
 	session.connection.Stop()
 	session.connection.Disconnect()
 	delete(manager.sessions, session.ChannelId)
+}
+
+func (manager *SessionManager) LeaveAll() {
+	for _, session := range manager.sessions {
+		session.Queue.Stop()
+		session.connection.Stop()
+		session.connection.Disconnect()
+	}
+	manager.sessions = make(map[string]*Session)
 }

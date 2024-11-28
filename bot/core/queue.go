@@ -1,16 +1,19 @@
 package core
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 type Song struct {
 	Url string
-	Ctx *Context
 }
 
 type SongQueue struct {
-	list    []Song
-	current *Song
-	Running bool
+	list           []Song
+	current        *Song
+	Running        bool
+	sessionManager *SessionManager
 }
 
 func (queue *SongQueue) Get() []Song {
@@ -22,10 +25,8 @@ func (queue *SongQueue) Set(list []Song) {
 }
 
 func (queue *SongQueue) Add(song Song) {
-	if len(queue.Get()) > 0 {
-		song.Ctx.UpdateResponse("Added `" + song.Url + "` to the queue.")
-	}
 	queue.list = append(queue.list, song)
+	fmt.Printf("Added song to queue. Queue length: %d, Running: %v\n", len(queue.list), queue.Running)
 }
 
 func (queue *SongQueue) HasNext() bool {
@@ -41,26 +42,32 @@ func (queue *SongQueue) Next() Song {
 
 func (queue *SongQueue) Start(sess *Session) {
 	queue.Running = true
-	for queue.HasNext() && queue.Running {
+	for queue.Running {
+		if !queue.HasNext() {
+			time.Sleep(200 * time.Millisecond)
+			continue
+		}
+
 		song := queue.Next()
-		song.Ctx.UpdateResponse("Now playing `" + song.Url + "`.")
+		sess.SendMessage("Now playing `" + song.Url + "`.")
 		err := sess.Play(song.Url)
 		if err != nil {
-			song.Ctx.UpdateResponse("Failed to play `" + song.Url + "`.")
+			sess.SendMessage("Failed to play `" + song.Url + "`.")
 			fmt.Printf("Failed to play `%s`: %v\n", song.Url, err)
 			return
 		}
 	}
 
-	//if !queue.Running {
-	//	callback("Stopped playing.")
-	//} else {
-	//	callback("Finished queue.")
-	//}
+	sess.SendMessage("Stopped playing.")
 }
 
-func NewSongQueue() *SongQueue {
+func (queue *SongQueue) Stop() {
+	queue.Running = false
+}
+
+func NewSongQueue(sm *SessionManager) *SongQueue {
 	queue := new(SongQueue)
 	queue.list = make([]Song, 0)
+	queue.sessionManager = sm
 	return queue
 }

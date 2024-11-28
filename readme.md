@@ -11,8 +11,9 @@ MuzicBot is a Discord bot that streams music from various sources directly into 
 ## ToDos
 
 - [x] Skip is broken
-- [ ] `UpdateResponse` not always working
-- [ ] Refactor how we send messages (preferably without using `context`, e.g. "Finished queue")
+- [x] `UpdateResponse` not always working
+- [x] Refactor how we send messages (preferably without using `context`, e.g. "Finished queue")
+- [ ] Leave channel after queue finishes
 
 ## Requirements
 

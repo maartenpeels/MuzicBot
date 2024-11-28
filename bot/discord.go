@@ -2,12 +2,13 @@ package bot
 
 import (
 	"fmt"
-	"github.com/bwmarrin/discordgo"
 	"log"
 	"muzicBot/bot/cmd"
 	"muzicBot/bot/core"
 	"os"
 	"os/signal"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 // TODO: handle disconnect / kick from voice channel
@@ -42,7 +43,7 @@ func Init() {
 		registeredCommands[i] = cmd
 	}
 
-	permissions := discordgo.PermissionVoiceUseVAD | discordgo.PermissionVoiceConnect | discordgo.PermissionReadMessages | discordgo.PermissionVoiceSpeak | discordgo.PermissionSendMessages | discordgo.PermissionManageMessages
+	permissions := discordgo.PermissionVoiceUseVAD | discordgo.PermissionVoiceConnect | discordgo.PermissionViewChannel | discordgo.PermissionVoiceSpeak | discordgo.PermissionSendMessages | discordgo.PermissionManageMessages
 	invite := fmt.Sprintf("https://discord.com/oauth2/authorize?client_id=%s&scope=bot&permissions=%d", discord.State.User.ID, permissions)
 	log.Printf("Invite URL: %s", invite)
 
@@ -52,15 +53,7 @@ func Init() {
 	<-stop
 
 	log.Printf("Shutting down")
-
-	// TODO: This breaks the discord client (until restart)
-	//log.Printf("Removing commands")
-	//for _, v := range registeredCommands {
-	//	err := discord.ApplicationCommandDelete(discord.State.User.ID, "", v.ID)
-	//	if err != nil {
-	//		log.Printf("Error deleting command: %s", err)
-	//	}
-	//}
+	Sessions.LeaveAll()
 }
 
 func InteractionCreate(s *discordgo.Session, i *discordgo.InteractionCreate) {
