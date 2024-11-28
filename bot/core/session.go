@@ -30,8 +30,8 @@ func newSession(guildId, channelId string, connection *Connection) *Session {
 	return session
 }
 
-func (sess *Session) Play(song Song) error {
-	return sess.connection.Play(song)
+func (sess *Session) Play(url string) error {
+	return sess.connection.Play(url)
 }
 
 func (sess *Session) Skip() {

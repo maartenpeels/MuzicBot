@@ -1,21 +1,20 @@
 package core
 
-type Song string
 type SongQueue struct {
-	list    []Song
-	current *Song
+	list    []string
+	current *string
 	Running bool
 }
 
-func (queue *SongQueue) Get() []Song {
+func (queue *SongQueue) Get() []string {
 	return queue.list
 }
 
-func (queue *SongQueue) Set(list []Song) {
+func (queue *SongQueue) Set(list []string) {
 	queue.list = list
 }
 
-func (queue *SongQueue) Add(url Song) {
+func (queue *SongQueue) Add(url string) {
 	queue.list = append(queue.list, url)
 }
 
@@ -23,21 +22,21 @@ func (queue *SongQueue) HasNext() bool {
 	return len(queue.list) > 0
 }
 
-func (queue *SongQueue) Next() Song {
-	song := queue.list[0]
+func (queue *SongQueue) Next() string {
+	url := queue.list[0]
 	queue.list = queue.list[1:]
-	queue.current = &song
-	return song
+	queue.current = &url
+	return url
 }
 
 func (queue *SongQueue) Start(sess *Session, callback func(string)) {
 	queue.Running = true
 	for queue.HasNext() && queue.Running {
-		song := queue.Next()
-		callback(string("Now playing `" + song + "`."))
-		err := sess.Play(song)
+		url := queue.Next()
+		callback("Now playing `" + url + "`.")
+		err := sess.Play(url)
 		if err != nil {
-			callback(string("Failed to play `" + song + "`."))
+			callback("Failed to play `" + url + "`.")
 			return
 		}
 	}
@@ -54,6 +53,6 @@ func (queue *SongQueue) Pause() {
 
 func NewSongQueue() *SongQueue {
 	queue := new(SongQueue)
-	queue.list = make([]Song, 0)
+	queue.list = make([]string, 0)
 	return queue
 }
