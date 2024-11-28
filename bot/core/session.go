@@ -55,11 +55,6 @@ func (manager *SessionManager) GetByGuild(guildId string) *Session {
 	return nil
 }
 
-func (manager *SessionManager) GetByChannel(channelId string) (*Session, bool) {
-	sess, found := manager.sessions[channelId]
-	return sess, found
-}
-
 func (manager *SessionManager) Join(discord *discordgo.Session, guildId, channelId string,
 	properties JoinProperties) (*Session, error) {
 	vc, err := discord.ChannelVoiceJoin(guildId, channelId, properties.Muted, properties.Deafened)

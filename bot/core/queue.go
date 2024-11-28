@@ -30,12 +30,6 @@ func (queue *SongQueue) Next() Song {
 	return song
 }
 
-func (queue *SongQueue) Clear() {
-	queue.list = make([]Song, 0)
-	queue.Running = false
-	queue.current = nil
-}
-
 func (queue *SongQueue) Start(sess *Session, callback func(string)) {
 	queue.Running = true
 	for queue.HasNext() && queue.Running {
@@ -52,10 +46,6 @@ func (queue *SongQueue) Start(sess *Session, callback func(string)) {
 	} else {
 		callback("Finished queue.")
 	}
-}
-
-func (queue *SongQueue) Current() *Song {
-	return queue.current
 }
 
 func (queue *SongQueue) Pause() {
