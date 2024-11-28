@@ -3,14 +3,10 @@ package core
 import (
 	"github.com/bwmarrin/discordgo"
 	"log"
-	"sync"
 )
 
 type Connection struct {
 	voiceConnection *discordgo.VoiceConnection
-	send            chan []int16
-	lock            sync.Mutex
-	sendPcm         bool
 	stopRunning     bool
 	shouldSkip      bool
 	playing         bool

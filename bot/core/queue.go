@@ -1,5 +1,7 @@
 package core
 
+import "fmt"
+
 type SongQueue struct {
 	list    []string
 	current *string
@@ -37,6 +39,7 @@ func (queue *SongQueue) Start(sess *Session, callback func(string)) {
 		err := sess.Play(url)
 		if err != nil {
 			callback("Failed to play `" + url + "`.")
+			fmt.Printf("Failed to play `%s`: %v\n", url, err)
 			return
 		}
 	}

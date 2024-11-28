@@ -45,7 +45,6 @@ func (connection *Connection) Play(url string) error {
 		return fmt.Errorf("opus encoder creation error: %w", err)
 	}
 	encoder.SetBitrate(128000) // 128 kbps
-	//encoder.SetComplexity(10)  // Maximum complexity
 
 	buffer := make([]byte, 3840) // PCM buffer size for 48kHz stereo
 	for {
