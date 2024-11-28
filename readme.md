@@ -11,7 +11,7 @@ MuzicBot is a Discord bot that streams music from various sources directly into 
 ## Requirements
 
 - Go 1.18+
-- `yt-dlp` (shipped for now)
+- `yt-dlp`
 - `ffmpeg`
 - A Discord bot token
 
@@ -19,7 +19,7 @@ MuzicBot is a Discord bot that streams music from various sources directly into 
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/yourusername/muzicBot.git
+   git clone https://github.com/maartenpeels/muzicBot.git
    cd muzicBot
    ```
 
@@ -41,7 +41,10 @@ TOKEN=your_discord_bot_token
 
 ### Docker
 
-1. docker run -e TOKEN=your_discord_bot_token maarten1012/muzicbot
+1. Run the bot:
+   ```sh
+   docker run -e TOKEN=your_discord_bot_token maarten1012/muzicbot
+   ```
 
 ### Development
 
@@ -61,7 +64,8 @@ TOKEN=your_discord_bot_token
 
 - `/ping`: Check if the bot is responsive.
 - `/play <url>`: Play music from the provided URL.
-- `/stop`: Stop the currently playing music.
+- `/skip`: Skip the currently playing song.
+- `/stop`: Stop playing music.
 
 ## Development
 

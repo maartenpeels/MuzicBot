@@ -93,7 +93,6 @@ func (connection *Connection) Skip() {
 	connection.shouldSkip = true
 }
 
-
 func (connection *Connection) Stop() {
 	connection.stopRunning = true
 	connection.playing = false

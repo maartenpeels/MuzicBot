@@ -23,7 +23,7 @@ var Commands = []*discordgo.ApplicationCommand{
 		},
 	},
 	{
-		Name:		 "skip",
+		Name:        "skip",
 		Description: "Skip the current song",
 	},
 	{
