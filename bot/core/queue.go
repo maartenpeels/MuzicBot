@@ -42,9 +42,19 @@ func (queue *SongQueue) Next() Song {
 
 func (queue *SongQueue) Start(sess *Session) {
 	queue.Running = true
+	idleTimeout := 10 * time.Second
+	idleTimer := time.NewTimer(idleTimeout)
+
 	for queue.Running {
 		if !queue.HasNext() {
-			time.Sleep(200 * time.Millisecond)
+			select {
+			case <-idleTimer.C:
+				sess.SendMessage("No activity for a while, leaving the channel.")
+				queue.sessionManager.Leave(*sess)
+				return
+			default:
+				time.Sleep(200 * time.Millisecond)
+			}
 			continue
 		}
 
@@ -56,6 +66,8 @@ func (queue *SongQueue) Start(sess *Session) {
 			fmt.Printf("Failed to play `%s`: %v\n", song.Url, err)
 			return
 		}
+
+		idleTimer.Reset(idleTimeout)
 	}
 
 	sess.SendMessage("Stopped playing.")
